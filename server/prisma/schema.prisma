@@ -15,6 +15,7 @@ model User {
   firstName String
   lastName String
   email String @unique
+  password String
   userTrainingSession UserTrainingSession[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

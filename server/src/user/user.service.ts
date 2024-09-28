@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 
@@ -13,8 +13,32 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneById(id: string) {
+    try {
+      const user = await this.databaseService.user.findUnique({
+        where: {
+          id: id,
+        },
+      });
+      return user;
+    } catch (error) {
+      console.error('Error', error);
+      throw new NotFoundException();
+    }
+  }
+
+  async findOneByEmail(email: string) {
+    try {
+      const user = await this.databaseService.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      return user;
+    } catch (error) {
+      console.error('Error', error);
+      throw new NotFoundException();
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
