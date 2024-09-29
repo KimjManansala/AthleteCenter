@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -23,5 +24,15 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async signUp(createUserDto: Prisma.UserCreateInput): Promise<any> {
+    try {
+      const user = await this.userService.create(createUserDto);
+      Logger.log('New User created and logging in');
+      return this.signIn(user.email, user.password);
+    } catch (error) {
+      Logger.error(error);
+    }
   }
 }
